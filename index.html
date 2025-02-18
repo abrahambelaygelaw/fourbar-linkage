@@ -10,6 +10,7 @@
     <div class="container">
       <h1>Four-bar Linkage Simulator</h1>
       <div class="simulator">
+        <div>
         <div class="canvas-container" id="canvas-container">
           <div class="canvas-wrapper" id="canvas-wrapper">
             <canvas id="canvas" width="2000" height="2000"></canvas>
@@ -18,101 +19,14 @@
             </div>
           </div>
         </div>
-
         <div class="controls-group">
-          <section class="control-section">
-            <h2>Simulation Controls</h2>
-            <div class="input-group">
-              <label for="speed">Speed:</label>
-              <input type="range" id="speed" value="3" min="1" max="100" />
-            </div>
-            <div class="button-group">
-              <button id="play">Play</button>
-              <button id="reset">Reset</button>
-            </div>
-          </section>
-
-          <section class="control-section">
-
-          </section>
-          <section class="control-section">
-            <h2>Coordinates</h2>
-           
-            <div class="coordinates-grid">
-              <div>
-                <h3>X Coordinate</h3>
-                <div class="coordinate-inputs">
-                  <div class="coordinate-input">
-                    <label for="ax">A</label>
-                    <input disabled type="number" id="ax" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="bx">B</label>
-                    <input type="number" id="bx" class="coordinate" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="cx">C</label>
-                    <input type="number" id="cx" class="coordinate" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="dx">D</label>
-                    <input type="number" id="dx" class="coordinate" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="px">P</label>
-                    <input type="number" id="px" class="coordinate" />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3>Y Coordinate</h3>
-                <div class="coordinate-inputs">
-                  <div class="coordinate-input">
-                    <label for="ay">A</label>
-                    <input disabled type="number" id="ay" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="by">B</label>
-                    <input type="number" id="by" class="coordinate" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="cy">C</label>
-                    <input type="number" id="cy" class="coordinate" />
-                  </div>
-                  <div class="coordinate-input">
-                    <label for="dy">D</label>
-                    <input type="number" id="dy" class="coordinate" />
-                  </div>
-                 <div class="coordinate-input">
-                    <label for="py">P</label>
-                    <input type="number" id="py" class="coordinate" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="button-group">
-              <!-- <button type="button" id="manualInput" >Manual Input</button> -->
-              <button type="button" id="setCoordinates">Set Coordinates</button>
-              <div class="change-angle">
-                <label for="adjust-angle">Adjust Angle</label>
-                <input
-                  type="range"
-                  id="adjust-angle"
-                  value="3"
-                  min="1"
-                  max="100"
-                />
-              </div>
-            </div>
-          </section>
-          <section class="control-section">
-            <h2>Orientation</h2>
+            <section class="control-section">
             <div class="input-group checkbox-input">
-              <label for="direction">Rotation Direction</label>
+              <label for="direction">Inverse input </label>
               <input type="checkbox" id="direction" class="orientation"/>
             </div>
             <div class="input-group checkbox-input">
-              <label for="reverse-angle">Reverse Angle</label>
+              <label for="reverse-angle">Flip output triangle</label>
               <input type="checkbox" id="reverse-angle" class="checkbox orientation"  />
             </div>
             <div class="input-group">
@@ -152,7 +66,6 @@
             </div>
           </section>
           <section class="control-section">
-            <h2>Oscillation</h2>
             <div class="input-group checkbox-input">
               <label for="oscInput">Limited reciprocating input</label>
               <input type="checkbox" id="oscInput" class="checkbox" />
@@ -179,20 +92,35 @@
                 step="5"
               />
             </div>
+            </section>
+</div>
+        </div>
+        <div class="controls-group">
+          <section class="control-section">
+            <div class="info-group">
+              <span class="info-title"> Input type: </span>
+              <span class="info-value" id="input-type"> </span>
+            </div>
+            <div class="info-group">
+              <span class="info-title"> Output type: </span>
+              <span class="info-value" id="output-type"> </span>
+            </div>
+            <div class="info-group">
+              <span class="info-title">Linkage type:</span>
+              <span class="info-value" id="linkage-type"></span>
+            </div>
+            <div class="info-group">
+              <span class="info-title">Validity index:</span>
+              <span class="info-value" id="validity-index"></span>
+            </div>
+            <div class="info-group">
+              <span class="info-title">Ground angle:</span>
+              <span class="info-value" id="grashof-index"></span>
+            </div>
           </section>
-                    <section class="control-section">
-            <div>
-              <span> Input type: </span>
-              <span id="input-type"> </span>
-            </div>
-            <div>
-              <span> Output type: </span>
-              <span id="output-type"> </span>
-            </div>
-            <div>
-              <span>Shortest link:</span>
-              <span id="grashof"></span>
-            </div>
+          </section>
+          <section class="control-section">
+
             <div class="checkbox-input">
               <label for="show-input">Show input range </label>
               <input type="checkbox" class="checkbox" id="show-input" />
@@ -213,9 +141,25 @@
               <label for="show-labels">Show labels </label>
               <input type="checkbox" id="show-labels" class="checkbox" />
             </div>
+            <div class="input-group">
+              <label for="speed">Speed:</label>
+              <input type="range" id="speed" value="3" min="1" max="100" />
+            </div>
+            <div class="button-group">
+              <button id="play">Play</button>
+              <button id="reset">Reset</button>
+            </div>
           </section>
-          <section class="control-section">
-            <h2>Link Lengths</h2>
+        <div class="tab-contents control-section">
+          <div class="tabs">
+            <div id="length-input" data-tab="length-tab" class="tab active">
+              Length
+            </div>
+            <div id="coordinate-input" data-tab="coordinates-tab" class="tab">
+              Coordinates
+            </div>
+          </div>
+        <section class=" tab-content active" id="length-tab">
             <div>
 
             <div class="input-group">
@@ -269,7 +213,7 @@
             </div>
             <div>
               <div class="input-group">
-                <label for="link1number">Link 1 Number:</label>
+                <label for="link1number">Ground link:</label>
                 <input
                   class="link-number"
                   type="number"
@@ -283,7 +227,7 @@
                 />
               </div>
               <div class="input-group">
-                <label for="link2number">Link 2 Number:</label>
+                <label for="link2number">Input link:</label>
                 <input
                   class="link-number"
                   type="number"
@@ -297,7 +241,7 @@
                 />
                 </div>
               <div class="input-group">
-                <label for="link3number">Link 3 Number:</label>
+                <label for="link3number">Coupler link:</label>
                 <input
                   class="link-number"
                   type="number"
@@ -311,7 +255,7 @@
                 />
                 </div>
               <div class="input-group">
-                <label for="link4number">Link 4 Number:</label>
+                <label for="link4number">Output link:</label>
                 <input
                   class="link-number"
                   type="number"
@@ -325,7 +269,78 @@
                 />
                 </div>
             </div>
-          </section>
+          </section>  
+        <section class=" tab-content" id="coordinates-tab">
+            <div class="coordinates-grid">
+              <div>
+                <h3>X Coordinate</h3>
+                <div class="coordinate-inputs">
+                  <div class="coordinate-input">
+                    <label for="ax">A</label>
+                    <input disabled type="number" id="ax" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="bx">B</label>
+                    <input type="number" id="bx" class="coordinate" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="cx">C</label>
+                    <input type="number" id="cx" class="coordinate" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="dx">D</label>
+                    <input type="number" id="dx" class="coordinate" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="px">P</label>
+                    <input type="number" id="px" class="coordinate" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3>Y Coordinate</h3>
+                <div class="coordinate-inputs">
+                  <div class="coordinate-input">
+                    <label for="ay">A</label>
+                    <input disabled type="number" id="ay" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="by">B</label>
+                    <input type="number" id="by" class="coordinate" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="cy">C</label>
+                    <input type="number" id="cy" class="coordinate" />
+                  </div>
+                  <div class="coordinate-input">
+                    <label for="dy">D</label>
+                    <input type="number" id="dy" class="coordinate" />
+                  </div>
+                 <div class="coordinate-input">
+                    <label for="py">P</label>
+                    <input type="number" id="py" class="coordinate" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="button-group">
+
+              <button type="button" id="setCoordinates">Set Coordinates</button>
+              <div class="change-angle">
+                <label for="adjust-angle">Adjust Angle</label>
+                <input
+                  type="range"
+                  id="adjust-angle"
+                  value="3"
+                  min="1"
+                  max="100"
+                />
+              </div>
+            </div>
+        </section>
+
+        </div>
+
 
         </div>
       </div>

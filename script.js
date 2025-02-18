@@ -34,14 +34,17 @@ class FourBarLinkage {
     let beta;
 
     let limits = limitsFourBar(this.l1, this.l3, this.l2, this.l4);
+    console.log(limits);
     if (!limits.valid || Math.max(this.l1, this.l2, this.l3, this.l4) > 100) {
       document.getElementById("invalid-linkage").style.display = "flex";
       return false;
     }
     document.getElementById("invalid-linkage").style.display = "none";
-    this.inputType = limits.inputType;
-    this.outputType = limits.outputType;
-    this.Grashof = limits.Grashof;
+    document.getElementById("input-type").innerText = limits.inputType;
+    document.getElementById("output-type").innerText = limits.outputType;
+    document.getElementById("linkage-type").innerText = limits.Grashof ? "Grashof" : "Non-Grashof";
+    document.getElementById("validity-index").innerText = roundOff(limits.ValidityIndex)
+    document.getElementById("grashof-index").innerText = roundOff(limits.GrashofIndex)
     let alphaLimited, alphaMin, alphaMax, alphaCent;
     let phase, alpha;
     let flipped = false;
@@ -221,8 +224,12 @@ class FourBarLinkage {
       alpha,
       !flipped
     );
+
     if (setFlag) {
-      if (Math.abs(beta1 - initialBeta) < Math.abs(beta2 - initialBeta)) {
+      if (
+        Math.abs(Math.abs(beta1) - Math.abs(initialBeta)) <
+        Math.abs(Math.abs(beta2) - Math.abs(initialBeta))
+      ) {
         beta = beta1;
       } else {
         beta = beta2;
@@ -232,7 +239,9 @@ class FourBarLinkage {
     } else {
       beta = beta1;
     }
-    console.log(initialAlpha);
+
+    console.log({ initialAlpha });
+    console.log({ initialBeta });
     // Recalculate point positions using the computed alpha and beta
     this.A.x = 0;
     this.A.y = 0;
@@ -371,10 +380,10 @@ function updateLinkage() {
   document.getElementById("link4-label").textContent = `Output Link (${l4})`;
   document.getElementById(
     "offset-label"
-  ).textContent = `Offset - ${Poffset}% of CD`;
+  ).textContent = `P Offset - ${Poffset}% of CD`;
   document.getElementById(
     "position-label"
-  ).textContent = `Position - ${PPosition}% from CD midpoint towards C`;
+  ).textContent = `P Position - ${PPosition}% from CD midpoint towards C`;
 }
 
 function setCoordinates() {
@@ -435,7 +444,7 @@ function setCoordinates() {
   const l2 = roundOff(Math.sqrt((dx - ax) ** 2 + (dy - ay) ** 2));
   const l3 = roundOff(Math.sqrt((cx - dx) ** 2 + (cy - dy) ** 2));
   const l4 = roundOff(Math.sqrt((bx - cx) ** 2 + (by - cy) ** 2));
-  
+
   document.getElementById("coupler-position").value = position;
   document.getElementById("coupler-offset").value = offset;
   PPosition = position;
@@ -455,18 +464,42 @@ function setCoordinates() {
   initialAlpha = Math.atan2(dy - ay, dx - ax) || 0;
   initialAlpha += groundPosition;
   initialBeta = Math.atan2(cy - by, cx - bx) || 0;
+  initialBeta += Math.PI * 2;
+  initialBeta %= 2 * Math.PI;
   initialBeta += groundPosition;
   document.getElementById("ground-angle").value =
     ((-groundPosition * 180) / Math.PI + 360) % 360;
   reverse = document.getElementById("reverse-angle").checked;
   direction = document.getElementById("direction").checked ? -1 : 1;
   clearTrace();
-  draw();
-  t = 0;
   setFlag = false;
   updateLinkage();
+  t = 0;
+  draw();
+  document.getElementById("ax").value = roundOff(linkage.A.x);
+  document.getElementById("ay").value = -roundOff(linkage.A.y);
+  document.getElementById("bx").value = roundOff(linkage.B.x);
+  document.getElementById("by").value = -roundOff(linkage.B.y);
+  document.getElementById("cx").value = roundOff(linkage.C.x);
+  document.getElementById("cy").value = -roundOff(linkage.C.y);
+  document.getElementById("dx").value = roundOff(linkage.D.x);
+  document.getElementById("dy").value = -roundOff(linkage.D.y);
+  document.getElementById("px").value = roundOff(linkage.P.x);
+  document.getElementById("py").value = -roundOff(linkage.P.y);
+  // set the labels
+  document.getElementById(
+    "link1-label"
+  ).textContent = `Ground Link (${linkage.l1})`;
+  document.getElementById(
+    "link2-label"
+  ).textContent = `Input Link (${linkage.l2})`;
+  document.getElementById(
+    "link3-label"
+  ).textContent = `Coupler Link (${linkage.l3})`;
+  document.getElementById(
+    "link4-label"
+  ).textContent = `Output Link (${linkage.l4})`;
 }
-
 
 function draw() {
   if (!linkage.calculate(t)) {
@@ -789,7 +822,19 @@ function reset() {
   document.getElementById("speed").value = 5;
   isPlaying = false;
   document.getElementById("play").innerHTML = "Play";
+  document.querySelectorAll(".coordinate").forEach((input) => {
+    input.disabled = true;
+    input.style.cursor = "not-allowed";
+  });
+  document.getElementById("setCoordinates").disabled = true;
+  document.getElementById("setCoordinates").style.cursor = "not-allowed";
+  document.getElementById("adjust-angle").disabled = true;
   t = 0;
+  document.getElementById("show-input").checked = false;
+  document.getElementById("trace-input").checked = false;
+  document.getElementById("trace-output").checked = false;
+  document.getElementById("trace-coupler").checked = false;
+  document.getElementById("show-labels").checked = false;
   clearTrace();
   updateLinkage();
 }
@@ -797,6 +842,29 @@ function reset() {
 function animate() {
   draw();
   isPlaying && requestAnimationFrame(animate);
+  document.getElementById("ax").value = roundOff(linkage.A.x);
+  document.getElementById("ay").value = -roundOff(linkage.A.y);
+  document.getElementById("bx").value = roundOff(linkage.B.x);
+  document.getElementById("by").value = -roundOff(linkage.B.y);
+  document.getElementById("cx").value = roundOff(linkage.C.x);
+  document.getElementById("cy").value = -roundOff(linkage.C.y);
+  document.getElementById("dx").value = roundOff(linkage.D.x);
+  document.getElementById("dy").value = -roundOff(linkage.D.y);
+  document.getElementById("px").value = roundOff(linkage.P.x);
+  document.getElementById("py").value = -roundOff(linkage.P.y);
+  // set the labels
+  document.getElementById(
+    "link1-label"
+  ).textContent = `Ground Link (${linkage.l1})`;
+  document.getElementById(
+    "link2-label"
+  ).textContent = `Input Link (${linkage.l2})`;
+  document.getElementById(
+    "link3-label"
+  ).textContent = `Coupler Link (${linkage.l3})`;
+  document.getElementById(
+    "link4-label"
+  ).textContent = `Output Link (${linkage.l4})`;
 }
 
 function clearTrace() {
@@ -804,6 +872,20 @@ function clearTrace() {
   inputTracePath = [];
   outputTracePath = [];
 }
+ document.querySelectorAll(".tab").forEach((tab) => {
+   tab.addEventListener("click", () => {
+     document
+       .querySelectorAll(".tab")
+       .forEach((t) => t.classList.remove("active"));
+     document
+       .querySelectorAll(".tab-content")
+       .forEach((c) => c.classList.remove("active"));
+     tab.classList.add("active");
+     document
+       .getElementById(tab.getAttribute("data-tab"))
+       .classList.add("active");
+   });
+ });
 
 // play
 document.getElementById("play").addEventListener("click", () => {
@@ -811,9 +893,23 @@ document.getElementById("play").addEventListener("click", () => {
     isPlaying = true;
     document.getElementById("play").innerHTML = "Pause";
     animate();
+    document.querySelectorAll(".coordinate").forEach((input) => {
+      input.disabled = true;
+      input.style.cursor = "not-allowed";
+    });
+    document.getElementById("setCoordinates").disabled = true;
+    document.getElementById("setCoordinates").style.cursor = "not-allowed";
+    document.getElementById("adjust-angle").disabled = true;
   } else {
     isPlaying = false;
     document.getElementById("play").innerHTML = "Play";
+    document.querySelectorAll(".coordinate").forEach((input) => {
+      input.disabled = false;
+      input.style.cursor = "pointer";
+    });
+    document.getElementById("setCoordinates").disabled = false;
+    document.getElementById("setCoordinates").style.cursor = "pointer";
+    document.getElementById("adjust-angle").disabled = false;
   }
 });
 
@@ -829,12 +925,14 @@ document.querySelectorAll(".checkbox").forEach((input) => {
 document.querySelectorAll(".link").forEach((input) => {
   input.addEventListener("input", ()=>{
     inputType = "range";
+    clearTrace();
     updateLinkage();
   });
 });
 
 document.querySelectorAll(".link-number").forEach((input) => {
   input.addEventListener("input", () => {
+    clearTrace();
     inputType = "number";
     updateLinkage();
   });
